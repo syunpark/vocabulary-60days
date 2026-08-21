@@ -3,330 +3,99 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vocabulary 101 · Day 01</title>
+<title>Vocabulary 101 · 60-Day Challenge</title>
 <style>
   :root{
     color-scheme: light dark;
-    --bg:#f7f8fb; --text:#17191f; --muted:#666b76; --card:#ffffff; --border:#e5e8ef;
-    --soft:#f2f4f7; --soft2:#eef0f5; --accent:#6b57ff; --accent2:#3da8ff;
-    --good:#2ca35f; --goodbg:#dff7e6; --bad:#d5535c; --badbg:#fde4e6;
+    --bg:#f7f8fb; --text:#17191f; --muted:#6b7280; --card:#ffffff; --border:#e5e7eb;
+    --soft:#f3f4f6; --accent:#6b57ff; --green:#22c55e; --lock:#9ca3af;
   }
   @media (prefers-color-scheme: dark){
     :root{
-      --bg:#111317; --text:#f6f7f9; --muted:#aeb4c0; --card:#1b1f26; --border:#2b3038;
-      --soft:#252a32; --soft2:#292e36; --goodbg:#173d25; --badbg:#4a1d22;
+      --bg:#111317; --text:#f8fafc; --muted:#aeb4c0; --card:#1b1f26; --border:#2b3038;
+      --soft:#252a32; --lock:#6b7280;
     }
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
   .app{padding:24px}
-  .wrap{max-width:860px;margin:0 auto}
-  .top{display:flex;justify-content:space-between;gap:14px;align-items:flex-end;flex-wrap:wrap;margin-bottom:18px}
-  h1{margin:0;font-size:28px;line-height:1.1}
-  .sub{color:var(--muted);margin-top:6px;font-size:14px}
-  .progress{height:10px;background:var(--border);border-radius:999px;overflow:hidden;margin:10px 0 22px}
-  .bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .25s ease}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:22px;margin-bottom:16px;box-shadow:0 8px 24px rgba(0,0,0,.05)}
-  .pill{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:var(--soft2);font-size:12px;font-weight:700;color:var(--muted)}
-  .word{font-size:36px;font-weight:800;margin:12px 0 6px;letter-spacing:-.02em}
-  .meaning{font-size:18px;font-weight:700;margin-bottom:4px}
-  .syn{color:var(--muted);font-size:14px;margin-bottom:16px}
-  .example{font-size:17px;line-height:1.6;padding:16px;border-radius:14px;background:var(--soft);margin:12px 0}
-  .note{font-size:14px;color:var(--muted)}
-  button{appearance:none;border:none;border-radius:14px;padding:13px 16px;font-size:15px;font-weight:750;cursor:pointer;min-height:44px}
-  button:disabled{opacity:.55;cursor:not-allowed}
-  .primary{background:var(--accent);color:#fff}
-  .secondary{background:var(--soft2);color:var(--text)}
-  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
-  .options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
-  .option{background:var(--soft);color:var(--text);text-align:left;border:1px solid transparent}
-  .option.correct{background:var(--goodbg);border-color:var(--good)}
-  .option.wrong{background:var(--badbg);border-color:var(--bad)}
-  .feedback{margin-top:14px;font-size:14px;line-height:1.5;min-height:22px}
-  input{width:100%;border:1px solid var(--border);background:var(--card);color:var(--text);padding:14px 15px;border-radius:14px;font-size:17px;outline:none}
-  input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(107,87,255,.12)}
-  .stats{display:flex;gap:10px;flex-wrap:wrap}
-  .stat{padding:9px 12px;border-radius:12px;background:var(--soft2);font-size:13px;font-weight:700}
-  .hidden{display:none!important}
-  .center{text-align:center}
-  .bigscore{font-size:54px;font-weight:900;margin:10px 0}
-  .review-list{display:grid;gap:8px;margin-top:16px}
-  .review-item{display:flex;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:12px;background:var(--soft);font-size:14px}
-  @media(max-width:600px){
+  .wrap{max-width:920px;margin:0 auto}
+  .hero{padding:28px 0 20px}
+  .eyebrow{font-size:13px;font-weight:800;letter-spacing:.12em;color:var(--accent);text-transform:uppercase}
+  h1{font-size:38px;margin:8px 0 4px;line-height:1.05}
+  .sub{color:var(--muted);font-size:16px}
+  .progress-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px;margin:18px 0 22px}
+  .progress-row{display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap}
+  .progress{height:10px;background:var(--soft);border-radius:999px;overflow:hidden;margin-top:12px}
+  .bar{height:100%;width:5%;background:linear-gradient(90deg,var(--accent),#3da8ff)}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .day{
+    display:flex;flex-direction:column;gap:8px;text-decoration:none;color:inherit;
+    background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;min-height:108px;
+    transition:transform .15s ease,border-color .15s ease;
+  }
+  .day.available:hover{transform:translateY(-2px);border-color:var(--accent)}
+  .num{font-size:13px;color:var(--muted);font-weight:800}
+  .label{font-size:18px;font-weight:850}
+  .status{font-size:13px;font-weight:750}
+  .available .status{color:var(--green)}
+  .locked{opacity:.62;cursor:not-allowed;background:var(--soft)}
+  .locked .status{color:var(--lock)}
+  .tip{margin:20px 0;color:var(--muted);font-size:14px;line-height:1.6}
+  @media(max-width:760px){.grid{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:520px){
     .app{padding:16px}
-    .options{grid-template-columns:1fr}
-    .word{font-size:31px}
-    .card{padding:18px}
+    h1{font-size:31px}
+    .grid{grid-template-columns:repeat(2,1fr)}
+    .day{min-height:96px}
   }
 </style>
 </head>
 <body>
-<div class="app" id="vocab-day1">
+<div class="app">
   <div class="wrap">
-    <div class="top">
-      <div>
-        <span class="pill">60-Day Challenge · Day 01</span>
-        <h1>Vocabulary Mission</h1>
-        <div class="sub">36 words · Learn → Quiz → Recall → Review</div>
-      </div>
-      <div class="stats">
-        <div class="stat" id="stepStat">Step 1</div>
-        <div class="stat" id="scoreStat">Score 0</div>
-      </div>
-    </div>
-
-    <div class="progress"><div class="bar" id="bar"></div></div>
-
-    <section id="learn" class="card">
-      <span class="pill" id="learnCount">LEARN 1 / 36</span>
-      <div class="word" id="word"></div>
-      <div class="meaning" id="meaning"></div>
-      <div class="syn" id="syn"></div>
-      <div class="example" id="example"></div>
-      <div class="note" id="note"></div>
-      <div class="actions">
-        <button class="secondary" id="prevBtn" type="button">← Previous</button>
-        <button class="primary" id="nextBtn" type="button">Next →</button>
-      </div>
+    <section class="hero">
+      <div class="eyebrow">American College Vocabulary 101</div>
+      <h1>60-Day Challenge</h1>
+      <div class="sub">One day at a time. Learn, quiz, recall, review.</div>
     </section>
 
-    <section id="quiz" class="card hidden">
-      <span class="pill" id="quizCount">QUIZ</span>
-      <div class="word" style="font-size:24px" id="question"></div>
-      <div class="options" id="options"></div>
-      <div class="feedback" id="feedback" aria-live="polite"></div>
-      <div class="actions">
-        <button class="primary hidden" id="quizNext" type="button">Next question →</button>
+    <section class="progress-card">
+      <div class="progress-row">
+        <div>
+          <strong>Current release</strong>
+          <div class="sub">Day 01–03 available</div>
+        </div>
+        <strong>3 / 60</strong>
       </div>
+      <div class="progress"><div class="bar"></div></div>
     </section>
 
-    <section id="recall" class="card hidden">
-      <span class="pill" id="recallCount">RECALL</span>
-      <div class="word" style="font-size:24px" id="recallPrompt"></div>
-      <div class="sub" style="margin:0 0 14px">Type the English word.</div>
-      <form id="recallForm">
-        <input id="recallInput" autocomplete="off" spellcheck="false" placeholder="Type your answer">
-        <div class="actions"><button class="primary" type="submit">Check</button></div>
-      </form>
-      <div class="feedback" id="recallFeedback" aria-live="polite"></div>
-      <div class="actions">
-        <button class="secondary hidden" id="recallNext" type="button">Next →</button>
-      </div>
-    </section>
+    <section class="grid" id="days"></section>
 
-    <section id="result" class="card hidden center">
-      <span class="pill">DAY 01 COMPLETE</span>
-      <div class="bigscore" id="finalScore">0%</div>
-      <div class="meaning" id="resultText"></div>
-      <div class="sub">틀린 단어는 아래에서 바로 다시 확인할 수 있어요.</div>
-      <div class="review-list" id="reviewList"></div>
-      <div class="actions" style="justify-content:center">
-        <button class="primary" id="restart" type="button">Restart Day 01</button>
-      </div>
-    </section>
+    <p class="tip">Day 04 onward will unlock as new lessons are added. Bookmark this page and return here each day.</p>
   </div>
 </div>
 
 <script>
 (() => {
-  const words = [
-    {w:'abandon',k:'버리다',s:'forsake',e:'The sailors had to abandon the damaged ship.',n:'사람·장소·계획 등을 완전히 버리거나 떠날 때 써요.'},
-    {w:'agile',k:'민첩한',s:'nimble',e:'The agile goalkeeper moved quickly across the field.',n:'몸이나 생각이 빠르고 유연한 느낌이에요.'},
-    {w:'archive',k:'공적 기록; 기록 보관소',s:'records',e:'The museum keeps old letters in its archive.',n:'오래 보존할 기록이나 그 기록을 모아 둔 곳이에요.'},
-    {w:'berate',k:'몹시 꾸짖다',s:'criticize severely',e:'The coach berated the team for arriving late.',n:'그냥 criticize보다 훨씬 강하게 꾸짖는 말이에요.'},
-    {w:'caliber',k:'능력, 수준',s:'capacity',e:'The company wants employees of the highest caliber.',n:'사람이나 일의 능력·질적 수준을 말할 수 있어요.'},
-    {w:'collusion',k:'음모, 공모',s:'plot',e:'The two companies were accused of collusion.',n:'보통 남을 속이기 위해 비밀리에 협력하는 상황이에요.'},
-    {w:'contrite',k:'뉘우치는, 회개하는',s:'regretful',e:'He felt contrite after lying to his teacher.',n:'잘못을 인정하고 진심으로 후회하는 느낌이에요.'},
-    {w:'deferential',k:'공손한, 경의를 표하는',s:'respectful',e:'She was deferential toward the senior professor.',n:'상대의 지위나 경험을 존중해 매우 공손한 태도예요.'},
-    {w:'devoid',k:'결여된',s:'wanting',e:'The speech was devoid of emotion.',n:'devoid of ~ = ~이 전혀 없는.'},
-    {w:'distinctive',k:'특유의, 독특한',s:'distinguishing',e:'The bird has a distinctive red stripe.',n:'다른 것과 구별되게 만드는 특징이 있다는 뜻이에요.'},
-    {w:'embezzle',k:'횡령하다',s:'misappropriate',e:'The accountant was caught embezzling company funds.',n:'맡겨진 돈을 몰래 개인적으로 빼돌리는 경우에 써요.'},
-    {w:'eternal',k:'영원한',s:'timeless',e:'Many poems explore the idea of eternal love.',n:'끝이 없거나 영원히 지속되는 것을 뜻해요.'},
-    {w:'facsimile',k:'복사본',s:'duplicate',e:'The library displayed a facsimile of the original manuscript.',n:'원본을 아주 비슷하게 복제한 사본이에요.'},
-    {w:'foil',k:'좌절시키다, 저지하다',s:'frustrate',e:'Police foiled the plan before it could begin.',n:'계획이나 시도를 성공하지 못하게 막는다는 뜻이에요.'},
-    {w:'genteel',k:'품위 있는, 점잖은',s:'well-bred',e:'They lived in a quiet, genteel neighborhood.',n:'예의 바르고 세련된, 약간 옛스러운 뉘앙스가 있어요.'},
-    {w:'hallucination',k:'환각',s:'delusion',e:'The fever caused vivid hallucinations.',n:'실제로 없는 것을 보거나 듣는 듯 느끼는 경험이에요.'},
-    {w:'hurtle',k:'질주하다',s:'dash',e:'The bicycle hurtled down the steep hill.',n:'아주 빠르고 다소 위험하게 움직이는 느낌이에요.'},
-    {w:'imprudent',k:'경솔한, 신중하지 못한',s:'unwise',e:'It was imprudent to spend all his savings at once.',n:'충분히 생각하지 않고 행동하는 것을 말해요.'},
-    {w:'infectious',k:'전염성의',s:'contagious',e:'Flu can be highly infectious.',n:'질병뿐 아니라 웃음·열정이 전염되는 듯하다는 비유에도 써요.'},
-    {w:'interrogation',k:'심문, 질문',s:'questioning',e:'The suspect remained calm during the interrogation.',n:'특히 경찰 등이 강하게 질문하는 상황에 자주 나와요.'},
-    {w:'keynote',k:'기조, 핵심 주제',s:'theme',e:'Hope was the keynote of her speech.',n:'전체 분위기나 메시지를 이끄는 핵심 주제예요.'},
-    {w:'manipulate',k:'교묘하게 조종하다',s:'juggle',e:'The ad was designed to manipulate consumers.',n:'사람이나 상황을 자기 뜻대로 교묘히 움직이는 뜻으로 자주 써요.'},
-    {w:'misgiving',k:'불안, 의심',s:'uneasiness',e:'She had misgivings about moving abroad alone.',n:'무언가 잘못될 것 같은 걱정이나 의심이에요.'},
-    {w:'nettle',k:'초조하게 만들다, 짜증나게 하다',s:'upset',e:'His sarcastic comment nettled her.',n:'상대를 거슬리게 하거나 짜증 나게 한다는 뜻이에요.'},
-    {w:'oratory',k:'웅변술',s:'rhetoric',e:'The politician was famous for his powerful oratory.',n:'대중 앞에서 설득력 있게 말하는 기술을 뜻해요.'},
-    {w:'pensive',k:'생각에 잠긴',s:'thoughtful',e:'She looked pensive as she stared out the window.',n:'조용히 깊은 생각에 잠긴 모습이에요.'},
-    {w:'predecessor',k:'전임자',s:'precursor',e:'The new principal thanked her predecessor.',n:'현재 사람보다 그 자리에 먼저 있었던 사람을 뜻해요.'},
-    {w:'reprehensible',k:'비난할 만한',s:'blameworthy',e:'Cheating vulnerable people is reprehensible.',n:'도덕적으로 매우 잘못되어 강하게 비난받아 마땅한 경우예요.'},
-    {w:'rudimentary',k:'기본적인, 초보적인',s:'fundamental',e:'He has only a rudimentary knowledge of French.',n:'아주 기초 단계에 머무른 것을 뜻해요.'},
-    {w:'skewed',k:'왜곡된, 치우친',s:'crooked',e:'The survey results were skewed by a small sample.',n:'균형이 한쪽으로 치우치거나 결과가 왜곡된 상태예요.'},
-    {w:'spatter',k:'튀기다, 튀어 묻히다',s:'splash',e:'Mud spattered his shoes as the car passed.',n:'작은 방울들이 여기저기 튀는 모습이에요.'},
-    {w:'stringent',k:'엄격한',s:'exacting',e:'The laboratory follows stringent safety rules.',n:'규칙·기준이 매우 엄격하고 까다롭다는 뜻이에요.'},
-    {w:'temperament',k:'성격, 기질',s:'personality',e:'She has a calm and patient temperament.',n:'타고난 감정적 성향이나 기질을 말해요.'},
-    {w:'temperance',k:'절제, 금주',s:'self-restraint',e:'The movement encouraged temperance and self-control.',n:'욕구를 절제하는 태도, 특히 역사적으로 금주와도 관련돼요.'},
-    {w:'velocity',k:'속도',s:'speed',e:'The car increased its velocity on the highway.',n:'과학에서는 방향을 포함한 속도를 뜻하지만 일반 문맥에서는 빠르기를 말하기도 해요.'},
-    {w:'wrath',k:'분노',s:'ire',e:'The decision provoked the wrath of the public.',n:'anger보다 문학적이고 매우 강한 분노를 나타내요.'}
-  ];
-
-  let learnIndex=0, quizIndex=0, recallIndex=0, score=0, total=0, missed=[];
-  const quizOrder=[6,3,8,13,22,25,28,31,34,10];
-  const recallOrder=[0,5,17,21,27,32,35,14];
-  const $=id=>document.getElementById(id);
-
-  function progress(p){ $('bar').style.width=Math.max(0,Math.min(100,p))+'%'; }
-
-  function renderLearn(){
-    const x=words[learnIndex];
-    $('learnCount').textContent=`LEARN ${learnIndex+1} / ${words.length}`;
-    $('word').textContent=x.w;
-    $('meaning').textContent=x.k;
-    $('syn').textContent='Synonym: '+x.s;
-    $('example').innerHTML=x.e.replace(new RegExp(x.w,'i'),m=>'<strong>'+m+'</strong>');
-    $('note').textContent='💡 '+x.n;
-    $('prevBtn').disabled=learnIndex===0;
-    $('nextBtn').textContent=learnIndex===words.length-1?'Start Quiz →':'Next →';
-    $('stepStat').textContent='Learn';
-    progress((learnIndex/words.length)*45);
-  }
-
-  $('prevBtn').addEventListener('click',()=>{ if(learnIndex>0){ learnIndex--; renderLearn(); } });
-  $('nextBtn').addEventListener('click',()=>{
-    if(learnIndex<words.length-1){ learnIndex++; renderLearn(); }
-    else showQuiz();
-  });
-
-  function showQuiz(){
-    $('learn').classList.add('hidden');
-    $('quiz').classList.remove('hidden');
-    $('stepStat').textContent='Quiz';
-    renderQuiz();
-  }
-
-  function renderQuiz(){
-    const idx=quizOrder[quizIndex], x=words[idx];
-    $('quizCount').textContent=`QUIZ ${quizIndex+1} / ${quizOrder.length}`;
-    $('question').textContent=`Which word best matches: “${x.k}” ?`;
-    $('feedback').textContent='';
-    $('quizNext').classList.add('hidden');
-
-    const pool=[idx];
-    while(pool.length<4){
-      const r=Math.floor(Math.random()*words.length);
-      if(!pool.includes(r)) pool.push(r);
-    }
-    pool.sort(()=>Math.random()-.5);
-
-    const box=$('options');
-    box.innerHTML='';
-    pool.forEach(i=>{
-      const b=document.createElement('button');
-      b.type='button';
-      b.className='option';
-      b.textContent=words[i].w;
-      b.addEventListener('click',()=>answerQuiz(b,i===idx,x));
-      box.appendChild(b);
-    });
-    progress(45+(quizIndex/quizOrder.length)*30);
-  }
-
-  function answerQuiz(btn,ok,x){
-    if([...$('options').children].some(b=>b.disabled)) return;
-    [...$('options').children].forEach(b=>b.disabled=true);
-    total++;
-    if(ok){
-      score++;
-      btn.classList.add('correct');
-      $('feedback').textContent=`✓ ${x.w} = ${x.k}. ${x.n}`;
+  const grid = document.getElementById('days');
+  for(let i=1;i<=60;i++){
+    const day = String(i).padStart(2,'0');
+    if(i<=3){
+      const a=document.createElement('a');
+      a.className='day available';
+      a.href=`vocabulary_day${day}.html`;
+      a.innerHTML=`<div class="num">DAY ${day}</div><div class="label">START</div><div class="status">● Available</div>`;
+      grid.appendChild(a);
     } else {
-      btn.classList.add('wrong');
-      missed.push(x.w);
-      [...$('options').children].forEach(b=>{ if(b.textContent===x.w) b.classList.add('correct'); });
-      $('feedback').textContent=`정답은 ${x.w}. ${x.n}`;
+      const d=document.createElement('div');
+      d.className='day locked';
+      d.setAttribute('aria-disabled','true');
+      d.innerHTML=`<div class="num">DAY ${day}</div><div class="label">LOCKED</div><div class="status">🔒 Coming soon</div>`;
+      grid.appendChild(d);
     }
-    $('scoreStat').textContent='Score '+score;
-    $('quizNext').classList.remove('hidden');
   }
-
-  $('quizNext').addEventListener('click',()=>{
-    quizIndex++;
-    if(quizIndex<quizOrder.length) renderQuiz();
-    else showRecall();
-  });
-
-  function showRecall(){
-    $('quiz').classList.add('hidden');
-    $('recall').classList.remove('hidden');
-    $('stepStat').textContent='Recall';
-    renderRecall();
-  }
-
-  function renderRecall(){
-    const x=words[recallOrder[recallIndex]];
-    $('recallCount').textContent=`RECALL ${recallIndex+1} / ${recallOrder.length}`;
-    $('recallPrompt').textContent=`${x.k} · synonym: ${x.s}`;
-    $('recallInput').value='';
-    $('recallInput').disabled=false;
-    $('recallFeedback').textContent='';
-    $('recallNext').classList.add('hidden');
-    progress(75+(recallIndex/recallOrder.length)*25);
-    setTimeout(()=>$('recallInput').focus(),50);
-  }
-
-  $('recallForm').addEventListener('submit',e=>{
-    e.preventDefault();
-    const x=words[recallOrder[recallIndex]];
-    const ans=$('recallInput').value.trim().toLowerCase();
-    if(!ans) return;
-    total++;
-    $('recallInput').disabled=true;
-    if(ans===x.w){
-      score++;
-      $('recallFeedback').textContent=`✓ Nice! “${x.w}” — ${x.k}`;
-    } else {
-      missed.push(x.w);
-      $('recallFeedback').textContent=`정답: ${x.w} — ${x.k}`;
-    }
-    $('scoreStat').textContent='Score '+score;
-    $('recallNext').classList.remove('hidden');
-  });
-
-  $('recallNext').addEventListener('click',()=>{
-    recallIndex++;
-    if(recallIndex<recallOrder.length) renderRecall();
-    else showResult();
-  });
-
-  function showResult(){
-    $('recall').classList.add('hidden');
-    $('result').classList.remove('hidden');
-    $('stepStat').textContent='Complete';
-    progress(100);
-
-    const pct=total?Math.round(score/total*100):0;
-    $('finalScore').textContent=pct+'%';
-    $('resultText').textContent=
-      pct>=85 ? 'Excellent — Day 01 cleared!' :
-      pct>=70 ? 'Good work — review the missed words once more.' :
-                'One more review will make these stick.';
-
-    const unique=[...new Set(missed)];
-    $('reviewList').innerHTML = unique.length
-      ? unique.map(w=>{
-          const x=words.find(v=>v.w===w);
-          return `<div class="review-item"><strong>${x.w}</strong><span>${x.k}</span></div>`;
-        }).join('')
-      : '<div class="review-item"><strong>Perfect!</strong><span>No missed words</span></div>';
-  }
-
-  $('restart').addEventListener('click',()=>{
-    learnIndex=0; quizIndex=0; recallIndex=0; score=0; total=0; missed=[];
-    $('scoreStat').textContent='Score 0';
-    $('result').classList.add('hidden');
-    $('learn').classList.remove('hidden');
-    renderLearn();
-  });
-
-  renderLearn();
 })();
 </script>
 </body>
