@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vocabulary 101 · Day 03</title>
+<style>
+  :root{
+    color-scheme: light dark;
+    --bg:#f7f8fb; --text:#17191f; --muted:#666b76; --card:#ffffff; --border:#e5e8ef;
+    --soft:#f2f4f7; --soft2:#eef0f5; --accent:#6b57ff; --accent2:#3da8ff;
+    --good:#2ca35f; --goodbg:#dff7e6; --bad:#d5535c; --badbg:#fde4e6;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#111317; --text:#f6f7f9; --muted:#aeb4c0; --card:#1b1f26; --border:#2b3038;
+      --soft:#252a32; --soft2:#292e36; --goodbg:#173d25; --badbg:#4a1d22;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+  .app{padding:24px}
+  .wrap{max-width:860px;margin:0 auto}
+  .top{display:flex;justify-content:space-between;gap:14px;align-items:flex-end;flex-wrap:wrap;margin-bottom:18px}
+  h1{margin:0;font-size:28px;line-height:1.1}
+  .sub{color:var(--muted);margin-top:6px;font-size:14px}
+  .progress{height:10px;background:var(--border);border-radius:999px;overflow:hidden;margin:10px 0 22px}
+  .bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .25s ease}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:22px;margin-bottom:16px;box-shadow:0 8px 24px rgba(0,0,0,.05)}
+  .pill{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:var(--soft2);font-size:12px;font-weight:700;color:var(--muted)}
+  .word{font-size:36px;font-weight:800;margin:12px 0 6px;letter-spacing:-.02em}
+  .meaning{font-size:18px;font-weight:700;margin-bottom:4px}
+  .syn{color:var(--muted);font-size:14px;margin-bottom:16px}
+  .example{font-size:17px;line-height:1.6;padding:16px;border-radius:14px;background:var(--soft);margin:12px 0}
+  .note{font-size:14px;color:var(--muted)}
+  button{appearance:none;border:none;border-radius:14px;padding:13px 16px;font-size:15px;font-weight:750;cursor:pointer;min-height:44px}
+  button:disabled{opacity:.55;cursor:not-allowed}
+  .primary{background:var(--accent);color:#fff}
+  .secondary{background:var(--soft2);color:var(--text)}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+  .options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+  .option{background:var(--soft);color:var(--text);text-align:left;border:1px solid transparent}
+  .option.correct{background:var(--goodbg);border-color:var(--good)}
+  .option.wrong{background:var(--badbg);border-color:var(--bad)}
+  .feedback{margin-top:14px;font-size:14px;line-height:1.5;min-height:22px}
+  input{width:100%;border:1px solid var(--border);background:var(--card);color:var(--text);padding:14px 15px;border-radius:14px;font-size:17px;outline:none}
+  input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(107,87,255,.12)}
+  .stats{display:flex;gap:10px;flex-wrap:wrap}
+  .stat{padding:9px 12px;border-radius:12px;background:var(--soft2);font-size:13px;font-weight:700}
+  .hidden{display:none!important}
+  .center{text-align:center}
+  .bigscore{font-size:54px;font-weight:900;margin:10px 0}
+  .review-list{display:grid;gap:8px;margin-top:16px}
+  .review-item{display:flex;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:12px;background:var(--soft);font-size:14px}
+  @media(max-width:600px){
+    .app{padding:16px}
+    .options{grid-template-columns:1fr}
+    .word{font-size:31px}
+    .card{padding:18px}
+  }
+</style>
+</head>
+<body>
+<div class="app" id="vocab-day03">
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <span class="pill">60-Day Challenge · Day 03</span>
+        <h1>Vocabulary Mission</h1>
+        <div class="sub">36 words · Learn → Quiz → Recall → Review</div>
+      </div>
+      <div class="stats">
+        <div class="stat" id="stepStat">Step 1</div>
+        <div class="stat" id="scoreStat">Score 0</div>
+      </div>
+    </div>
+
+    <div class="progress"><div class="bar" id="bar"></div></div>
+
+    <section id="learn" class="card">
+      <span class="pill" id="learnCount">LEARN 1 / 36</span>
+      <div class="word" id="word"></div>
+      <div class="meaning" id="meaning"></div>
+      <div class="syn" id="syn"></div>
+      <div class="example" id="example"></div>
+      <div class="note" id="note"></div>
+      <div class="actions">
+        <button class="secondary" id="prevBtn" type="button">← Previous</button>
+        <button class="primary" id="nextBtn" type="button">Next →</button>
+      </div>
+    </section>
+
+    <section id="quiz" class="card hidden">
+      <span class="pill" id="quizCount">QUIZ</span>
+      <div class="word" style="font-size:24px" id="question"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback" aria-live="polite"></div>
+      <div class="actions">
+        <button class="primary hidden" id="quizNext" type="button">Next question →</button>
+      </div>
+    </section>
+
+    <section id="recall" class="card hidden">
+      <span class="pill" id="recallCount">RECALL</span>
+      <div class="word" style="font-size:24px" id="recallPrompt"></div>
+      <div class="sub" style="margin:0 0 14px">Type the English word.</div>
+      <form id="recallForm">
+        <input id="recallInput" autocomplete="off" spellcheck="false" placeholder="Type your answer">
+        <div class="actions"><button class="primary" type="submit">Check</button></div>
+      </form>
+      <div class="feedback" id="recallFeedback" aria-live="polite"></div>
+      <div class="actions">
+        <button class="secondary hidden" id="recallNext" type="button">Next →</button>
+      </div>
+    </section>
+
+    <section id="result" class="card hidden center">
+      <span class="pill">DAY 03 COMPLETE</span>
+      <div class="bigscore" id="finalScore">0%</div>
+      <div class="meaning" id="resultText"></div>
+      <div class="sub">틀린 단어는 아래에서 바로 다시 확인할 수 있어요.</div>
+      <div class="review-list" id="reviewList"></div>
+      <div class="actions" style="justify-content:center">
+        <button class="primary" id="restart" type="button">Restart Day 03</button>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+(() => {
+  const words = [{"w": "abdicate", "k": "(권리 등을) 버리다, 왕위를 포기하다", "s": "abandon", "e": "The king chose to abdicate the throne.", "n": "특히 왕위·권력·책임을 공식적으로 포기할 때 써요."}, {"w": "agitate", "k": "자극하다, 선동하다", "s": "instigate", "e": "The speech agitated the crowd.", "n": "사람을 흥분시키거나 행동하도록 부추기는 뜻이에요."}, {"w": "arduous", "k": "힘든", "s": "difficult", "e": "Climbing the mountain was an arduous task.", "n": "많은 노력과 인내가 필요한 아주 힘든 일을 말해요."}, {"w": "besiege", "k": "에워싸다, 포위하다", "s": "surround", "e": "Enemy forces besieged the city for weeks.", "n": "군대가 도시나 건물을 둘러싸 공격하거나 압박하는 뜻이에요."}, {"w": "callous", "k": "무감각한, 냉담한", "s": "insensitive", "e": "His callous remark hurt her feelings.", "n": "다른 사람의 감정이나 고통에 무심한 태도를 말해요."}, {"w": "comatose", "k": "혼수 상태의", "s": "unconscious", "e": "The patient remained comatose after the accident.", "n": "의학적으로 깊은 의식 불명 상태를 뜻해요."}, {"w": "dawdle", "k": "꾸물거리다", "s": "delay", "e": "Don't dawdle or you'll miss the bus.", "n": "할 일을 빨리 하지 않고 시간을 끄는 행동이에요."}, {"w": "defiance", "k": "반항", "s": "resistance", "e": "She crossed her arms in open defiance.", "n": "권위나 명령에 맞서 따르지 않는 태도를 뜻해요."}, {"w": "dexterous", "k": "(손이나 몸놀림이) 재빠른, 능숙한", "s": "proficient", "e": "The surgeon is highly dexterous with delicate instruments.", "n": "특히 손을 정교하고 능숙하게 쓰는 능력을 말해요."}, {"w": "distracted", "k": "산만해진", "s": "disturbed", "e": "He was too distracted to finish his homework.", "n": "주의가 다른 데로 빼앗겨 집중하지 못하는 상태예요."}, {"w": "embroidery", "k": "자수", "s": "fancy stitching", "e": "The dress was decorated with colorful embroidery.", "n": "천 위에 실로 무늬를 놓는 장식 기술이나 작품이에요."}, {"w": "eulogy", "k": "추도사, 찬사", "s": "tribute", "e": "She delivered a moving eulogy at the memorial service.", "n": "보통 고인을 기리며 하는 연설을 뜻해요."}, {"w": "faculty", "k": "강사진, 교수진", "s": "teaching staff", "e": "The university faculty met to discuss the new policy.", "n": "이 Day에서는 학교의 교수·교사 집단이라는 뜻이에요."}, {"w": "foolhardy", "k": "무모한", "s": "reckless", "e": "It was foolhardy to swim during the storm.", "n": "위험을 충분히 생각하지 않고 무모하게 행동하는 뜻이에요."}, {"w": "genuine", "k": "진짜의, 진심 어린", "s": "authentic", "e": "Her smile showed genuine happiness.", "n": "가짜가 아닌 진짜이거나 감정이 진심이라는 뜻이에요."}, {"w": "hamlet", "k": "작은 마을", "s": "small village", "e": "They spent the night in a quiet mountain hamlet.", "n": "village보다 더 작은 마을을 뜻해요."}, {"w": "hustle", "k": "난폭하게 밀치다, 서두르게 하다", "s": "jostle", "e": "People hustled through the crowded station.", "n": "사람들이 바쁘게 움직이거나 서로 밀치며 이동하는 느낌이에요."}, {"w": "impugn", "k": "비난하다, 의심을 제기하다", "s": "assail", "e": "The lawyer tried to impugn the witness's credibility.", "n": "사람의 정직성이나 주장에 의문을 제기하며 공격하는 뜻이에요."}, {"w": "infiltrate", "k": "침투시키다, 침투하다", "s": "penetrate", "e": "The spies managed to infiltrate the organization.", "n": "조용히 안으로 들어가 조직이나 장소에 숨어드는 뜻이에요."}, {"w": "interval", "k": "(장소나 시간의) 간격", "s": "gap", "e": "There was a short interval between the two performances.", "n": "두 사건·시간·장소 사이의 간격을 뜻해요."}, {"w": "limb", "k": "팔과 다리, 사지", "s": "extremity", "e": "The injury affected his lower limb.", "n": "사람이나 동물의 팔·다리를 가리켜요."}, {"w": "manuscript", "k": "필사본, 원고", "s": "document", "e": "The author submitted the final manuscript to the publisher.", "n": "출판 전 원고나 손으로 쓴 문서를 뜻해요."}, {"w": "mitigate", "k": "완화하다", "s": "alleviate", "e": "Trees can help mitigate the effects of extreme heat.", "n": "나쁜 영향이나 고통의 정도를 줄인다는 뜻이에요."}, {"w": "nuisance", "k": "성가신 사람이나 것", "s": "annoyance", "e": "The constant noise became a serious nuisance.", "n": "계속 귀찮게 하거나 불편을 주는 사람·문제를 말해요."}, {"w": "ordeal", "k": "시련", "s": "trouble", "e": "The long rescue operation was a terrible ordeal.", "n": "매우 힘들고 고통스러운 경험을 뜻해요."}, {"w": "perennial", "k": "다년생의, 오래 지속되는", "s": "enduring", "e": "Traffic is a perennial problem in the city.", "n": "식물은 여러 해 사는 뜻, 문제는 오래 반복된다는 뜻으로도 써요."}, {"w": "preface", "k": "책의 서문", "s": "foreword", "e": "The author explained the book's purpose in the preface.", "n": "책 본문 앞에서 목적이나 배경을 설명하는 글이에요."}, {"w": "qualm", "k": "양심의 가책, 불안", "s": "misgiving", "e": "She had no qualms about speaking the truth.", "n": "무언가를 하면서 드는 도덕적 불편함이나 불안을 뜻해요."}, {"w": "reprimand", "k": "공개적으로 꾸짖다, 견책하다", "s": "blame", "e": "The employee received a formal reprimand for repeated lateness.", "n": "특히 공식적으로 강하게 꾸짖거나 경고하는 뜻이에요."}, {"w": "rumple", "k": "구기다", "s": "crumple", "e": "He rumpled the paper and put it in his pocket.", "n": "옷이나 종이를 주름지고 구겨지게 만드는 뜻이에요."}, {"w": "sham", "k": "거짓, 가짜", "s": "pretense", "e": "The supposed contest was a sham.", "n": "겉보기만 그럴듯한 속임수나 가짜를 뜻해요."}, {"w": "stroll", "k": "이리저리 거닐다", "s": "walk", "e": "We strolled along the beach after dinner.", "n": "서두르지 않고 편안하게 걷는 느낌이에요."}, {"w": "tart", "k": "맛이 시큼한", "s": "sour", "e": "The berries were fresh but slightly tart.", "n": "새콤하고 신맛이 나는 음식을 묘사할 때 써요."}, {"w": "trip", "k": "발에 걸려 넘어지다", "s": "fall", "e": "Be careful not to trip over the cable.", "n": "발이 무엇에 걸려 비틀거리거나 넘어지는 뜻이에요."}, {"w": "venerate", "k": "존경하다", "s": "revere", "e": "Many people venerate the scholar for his wisdom.", "n": "아주 깊은 존경과 경의를 표한다는 뜻이에요."}, {"w": "wriggle", "k": "꿈틀거리며 움직이다", "s": "crawl", "e": "The child wriggled out of the tight sweater.", "n": "몸을 이리저리 비틀며 움직이는 모습을 나타내요."}];
+  let learnIndex=0, quizIndex=0, recallIndex=0, score=0, total=0, missed=[];
+  const quizOrder=[0, 4, 8, 13, 17, 22, 25, 28, 31, 34];
+  const recallOrder=[2, 6, 11, 15, 19, 24, 27, 35];
+  const $=id=>document.getElementById(id);
+
+  function progress(p){ $('bar').style.width=Math.max(0,Math.min(100,p))+'%'; }
+
+  function renderLearn(){
+    const x=words[learnIndex];
+    $('learnCount').textContent=`LEARN ${learnIndex+1} / ${words.length}`;
+    $('word').textContent=x.w;
+    $('meaning').textContent=x.k;
+    $('syn').textContent='Synonym: '+x.s;
+    $('example').innerHTML=x.e.replace(new RegExp(x.w,'i'),m=>'<strong>'+m+'</strong>');
+    $('note').textContent='💡 '+x.n;
+    $('prevBtn').disabled=learnIndex===0;
+    $('nextBtn').textContent=learnIndex===words.length-1?'Start Quiz →':'Next →';
+    $('stepStat').textContent='Learn';
+    progress((learnIndex/words.length)*45);
+  }
+
+  $('prevBtn').addEventListener('click',()=>{ if(learnIndex>0){ learnIndex--; renderLearn(); } });
+  $('nextBtn').addEventListener('click',()=>{
+    if(learnIndex<words.length-1){ learnIndex++; renderLearn(); }
+    else showQuiz();
+  });
+
+  function showQuiz(){
+    $('learn').classList.add('hidden');
+    $('quiz').classList.remove('hidden');
+    $('stepStat').textContent='Quiz';
+    renderQuiz();
+  }
+
+  function renderQuiz(){
+    const idx=quizOrder[quizIndex], x=words[idx];
+    $('quizCount').textContent=`QUIZ ${quizIndex+1} / ${quizOrder.length}`;
+    $('question').textContent=`Which word best matches: “${x.k}” ?`;
+    $('feedback').textContent='';
+    $('quizNext').classList.add('hidden');
+    const pool=[idx];
+    while(pool.length<4){
+      const r=Math.floor(Math.random()*words.length);
+      if(!pool.includes(r)) pool.push(r);
+    }
+    pool.sort(()=>Math.random()-.5);
+    const box=$('options');
+    box.innerHTML='';
+    pool.forEach(i=>{
+      const b=document.createElement('button');
+      b.type='button';
+      b.className='option';
+      b.textContent=words[i].w;
+      b.addEventListener('click',()=>answerQuiz(b,i===idx,x));
+      box.appendChild(b);
+    });
+    progress(45+(quizIndex/quizOrder.length)*30);
+  }
+
+  function answerQuiz(btn,ok,x){
+    if([...$('options').children].some(b=>b.disabled)) return;
+    [...$('options').children].forEach(b=>b.disabled=true);
+    total++;
+    if(ok){
+      score++;
+      btn.classList.add('correct');
+      $('feedback').textContent=`✓ ${x.w} = ${x.k}. ${x.n}`;
+    } else {
+      btn.classList.add('wrong');
+      missed.push(x.w);
+      [...$('options').children].forEach(b=>{ if(b.textContent===x.w) b.classList.add('correct'); });
+      $('feedback').textContent=`정답은 ${x.w}. ${x.n}`;
+    }
+    $('scoreStat').textContent='Score '+score;
+    $('quizNext').classList.remove('hidden');
+  }
+
+  $('quizNext').addEventListener('click',()=>{
+    quizIndex++;
+    if(quizIndex<quizOrder.length) renderQuiz();
+    else showRecall();
+  });
+
+  function showRecall(){
+    $('quiz').classList.add('hidden');
+    $('recall').classList.remove('hidden');
+    $('stepStat').textContent='Recall';
+    renderRecall();
+  }
+
+  function renderRecall(){
+    const x=words[recallOrder[recallIndex]];
+    $('recallCount').textContent=`RECALL ${recallIndex+1} / ${recallOrder.length}`;
+    $('recallPrompt').textContent=`${x.k} · synonym: ${x.s}`;
+    $('recallInput').value='';
+    $('recallInput').disabled=false;
+    $('recallFeedback').textContent='';
+    $('recallNext').classList.add('hidden');
+    progress(75+(recallIndex/recallOrder.length)*25);
+    setTimeout(()=>$('recallInput').focus(),50);
+  }
+
+  $('recallForm').addEventListener('submit',e=>{
+    e.preventDefault();
+    const x=words[recallOrder[recallIndex]];
+    const ans=$('recallInput').value.trim().toLowerCase();
+    if(!ans) return;
+    total++;
+    $('recallInput').disabled=true;
+    if(ans===x.w){
+      score++;
+      $('recallFeedback').textContent=`✓ Nice! “${x.w}” — ${x.k}`;
+    } else {
+      missed.push(x.w);
+      $('recallFeedback').textContent=`정답: ${x.w} — ${x.k}`;
+    }
+    $('scoreStat').textContent='Score '+score;
+    $('recallNext').classList.remove('hidden');
+  });
+
+  $('recallNext').addEventListener('click',()=>{
+    recallIndex++;
+    if(recallIndex<recallOrder.length) renderRecall();
+    else showResult();
+  });
+
+  function showResult(){
+    $('recall').classList.add('hidden');
+    $('result').classList.remove('hidden');
+    $('stepStat').textContent='Complete';
+    progress(100);
+    const pct=total?Math.round(score/total*100):0;
+    $('finalScore').textContent=pct+'%';
+    $('resultText').textContent=
+      pct>=85 ? 'Excellent — Day 03 cleared!' :
+      pct>=70 ? 'Good work — review the missed words once more.' :
+                'One more review will make these stick.';
+    const unique=[...new Set(missed)];
+    $('reviewList').innerHTML = unique.length
+      ? unique.map(w=>{
+          const x=words.find(v=>v.w===w);
+          return `<div class="review-item"><strong>${x.w}</strong><span>${x.k}</span></div>`;
+        }).join('')
+      : '<div class="review-item"><strong>Perfect!</strong><span>No missed words</span></div>';
+  }
+
+  $('restart').addEventListener('click',()=>{
+    learnIndex=0; quizIndex=0; recallIndex=0; score=0; total=0; missed=[];
+    $('scoreStat').textContent='Score 0';
+    $('result').classList.add('hidden');
+    $('learn').classList.remove('hidden');
+    renderLearn();
+  });
+
+  renderLearn();
+})();
+</script>
+</body>
+</html>
