@@ -1,10 +1,16 @@
 {
-  "releasedDay": 7,
+  "releasedDay": 10,
   "reviews": [
     {
       "afterDay": 5,
       "title": "REVIEW 1-5",
       "file": "review_day01_05.html",
+      "subtitle": "40 Questions"
+    },
+ {
+      "afterDay": 10,
+      "title": "REVIEW 6-10",
+      "file": "review_day06_10.html",
       "subtitle": "40 Questions"
     }
   ]
