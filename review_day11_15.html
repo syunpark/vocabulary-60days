@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vocabulary 101 · Review 03 · Days 11–15</title>
+<style>
+:root{color-scheme:light dark;--bg:#f7f8fb;--text:#17191f;--muted:#69707d;--card:#fff;--border:#e5e8ef;--soft:#f2f4f7;--accent:#6b57ff;--accent2:#3da8ff;--good:#2ca35f;--goodbg:#dff7e6;--bad:#d5535c;--badbg:#fde4e6}
+@media(prefers-color-scheme:dark){:root{--bg:#111317;--text:#f6f7f9;--muted:#adb4c0;--card:#1b1f26;--border:#2b3038;--soft:#252a32;--goodbg:#173d25;--badbg:#4a1d22}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.app{padding:24px} .wrap{max-width:880px;margin:auto}
+.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;flex-wrap:wrap;margin-bottom:18px}
+h1{margin:5px 0;font-size:30px}
+.sub{color:var(--muted);font-size:14px}
+.pill{display:inline-flex;padding:6px 10px;border-radius:999px;background:var(--soft);font-size:12px;font-weight:800;color:var(--muted)}
+.progress{height:10px;background:var(--border);border-radius:999px;overflow:hidden;margin:12px 0 20px}
+.bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .25s}
+.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:22px;box-shadow:0 8px 24px rgba(0,0,0,.05)}
+.question{font-size:23px;font-weight:850;line-height:1.35;margin:14px 0}
+.meta{display:flex;gap:8px;flex-wrap:wrap}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+button{appearance:none;border:none;border-radius:14px;padding:13px 16px;min-height:44px;font-size:15px;font-weight:750;cursor:pointer}
+.option{background:var(--soft);color:var(--text);text-align:left;border:1px solid transparent}
+.option.correct{background:var(--goodbg);border-color:var(--good)}
+.option.wrong{background:var(--badbg);border-color:var(--bad)}
+.primary{background:var(--accent);color:#fff}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.feedback{min-height:24px;margin-top:14px;line-height:1.5;font-size:14px}
+input{width:100%;padding:14px 15px;border-radius:14px;border:1px solid var(--border);font-size:17px;background:var(--card);color:var(--text)}
+.hidden{display:none!important}
+.score{font-size:58px;font-weight:900;margin:10px 0}
+.center{text-align:center}
+.weak{display:grid;gap:8px;margin-top:16px}
+.weakitem{display:flex;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:12px;background:var(--soft);text-align:left}
+.tag{font-size:12px;color:var(--muted)}
+.stats{display:flex;gap:8px;flex-wrap:wrap}
+.stat{padding:8px 10px;background:var(--soft);border-radius:12px;font-size:13px;font-weight:750}
+@media(max-width:600px){.app{padding:16px}.options{grid-template-columns:1fr}.card{padding:18px}h1{font-size:27px}}
+</style>
+</head>
+<body>
+<div class="app"><div class="wrap">
+<div class="top">
+  <div>
+    <span class="pill">REVIEW 03 · DAYS 11–15</span>
+    <h1>Vocabulary Challenge</h1>
+    <div class="sub">40 questions · English Meaning · Synonym · Context · Spelling Recall</div>
+  </div>
+  <div class="stats">
+    <div class="stat" id="countStat">1 / 40</div>
+    <div class="stat" id="scoreStat">Score 0</div>
+  </div>
+</div>
+
+<div class="progress"><div class="bar" id="bar"></div></div>
+
+<section id="quizCard" class="card">
+  <div class="meta"><span class="pill" id="typePill">QUIZ</span><span class="pill" id="dayPill">DAY</span></div>
+  <div class="question" id="question"></div>
+  <div id="mcqArea"><div class="options" id="options"></div></div>
+  <div id="inputArea" class="hidden">
+    <form id="recallForm">
+      <input id="answerInput" autocomplete="off" spellcheck="false" placeholder="Type the English word">
+      <div class="actions"><button class="primary" type="submit">Check</button></div>
+    </form>
+  </div>
+  <div class="feedback" id="feedback" aria-live="polite"></div>
+  <div class="actions"><button id="nextBtn" class="primary hidden" type="button">Next →</button></div>
+</section>
+
+<section id="resultCard" class="card hidden center">
+  <span class="pill">REVIEW 03 COMPLETE</span>
+  <div class="score" id="finalScore"></div>
+  <div style="font-size:19px;font-weight:800" id="resultText"></div>
+  <div class="sub" style="margin-top:7px">Focus on the Weak Words below, then try the challenge again.</div>
+  <div class="weak" id="weakList"></div>
+  <div class="actions" style="justify-content:center"><button id="restartBtn" class="primary" type="button">Try Review Again</button></div>
+</section>
+</div></div>
+
+<script>
+(()=>{
+const words=[{"w": "abstract", "k": "개요", "s": "summary", "e": "The report begins with a brief abstract of the main findings.", "n": "긴 글이나 연구의 핵심 내용을 짧게 요약한 부분을 뜻해요.", "day": 11}, {"w": "allege", "k": "강력히 주장하다", "s": "claim", "e": "The witness alleged that the company had ignored the warning.", "n": "증거가 완전히 확인되지 않은 상태에서 사실이라고 주장할 때 자주 써요.", "day": 11}, {"w": "aspire", "k": "간절히 원하다", "s": "yearn", "e": "She aspires to become a physician one day.", "n": "높은 목표를 이루기를 강하게 바라거나 열망하는 뜻이에요.", "day": 11}, {"w": "blanch", "k": "하얗게 만들다", "s": "whiten", "e": "She blanched when she heard the unexpected news.", "n": "색을 희게 만들거나, 놀라서 얼굴이 창백해지는 뜻으로도 써요.", "day": 11}, {"w": "carnage", "k": "대학살", "s": "massacre", "e": "The battle left terrible carnage across the field.", "n": "많은 사람이 잔혹하게 죽는 대규모 살상을 뜻해요.", "day": 11}, {"w": "competent", "k": "능력 있는", "s": "capable", "e": "He is a competent manager who handles pressure well.", "n": "필요한 능력과 기술을 갖추어 일을 제대로 할 수 있다는 뜻이에요.", "day": 11}, {"w": "copious", "k": "풍부한", "s": "abundant", "e": "She took copious notes during the lecture.", "n": "양이 매우 많고 풍부한 것을 뜻해요.", "day": 11}, {"w": "delineate", "k": "윤곽을 그리다", "s": "describe", "e": "The map clearly delineates the borders of the region.", "n": "경계나 특징을 분명하게 나타내거나 설명하는 뜻이에요.", "day": 11}, {"w": "dilemma", "k": "딜레마", "s": "perplexity", "e": "She faced a dilemma between studying abroad and staying home.", "n": "두 가지 선택 모두 쉽지 않아 고민되는 상황을 뜻해요.", "day": 11}, {"w": "dodge", "k": "재빨리 피하다", "s": "evade", "e": "He dodged the ball just before it hit him.", "n": "몸을 재빨리 움직여 피하거나 질문·책임을 회피하는 뜻이에요.", "day": 11}, {"w": "encompass", "k": "둘러싸다", "s": "include", "e": "The course encompasses history, culture, and politics.", "n": "여러 요소를 포함하거나 둘러싼다는 뜻이에요.", "day": 11}, {"w": "evolve", "k": "서서히 발전시키다", "s": "develop", "e": "The small project evolved into a major program.", "n": "시간이 지나면서 점차 발전하거나 변화하는 뜻이에요.", "day": 11}, {"w": "fanatic", "k": "광신자", "s": "maniac", "e": "The sports fanatic never misses a home game.", "n": "어떤 신념이나 활동에 지나치게 열중하는 사람을 뜻해요.", "day": 11}, {"w": "feud", "k": "(오랜 동안의) 불화", "s": "conflict", "e": "The two families had been involved in a bitter feud for years.", "n": "개인이나 집단 사이에 오래 지속되는 심한 다툼을 뜻해요.", "day": 11}, {"w": "gird", "k": "허리에 차다", "s": "encircle", "e": "The warrior girded a sword around his waist.", "n": "무언가를 둘러 매거나, 준비를 단단히 한다는 뜻으로도 써요.", "day": 11}, {"w": "ignoble", "k": "저열한", "s": "mean", "e": "He was ashamed of his ignoble behavior.", "n": "품위 없고 비열하며 도덕적으로 낮은 행동을 나타내요.", "day": 11}, {"w": "inaugurate", "k": "정식으로 시작하다", "s": "initiate", "e": "The president inaugurated the new research center.", "n": "새 제도·행사·건물 등을 공식적으로 시작하거나 개관하는 뜻이에요.", "day": 11}, {"w": "ingrained", "k": "뿌리 깊이 박힌", "s": "entrenched", "e": "The habit had become deeply ingrained over many years.", "n": "생각이나 습관이 오랫동안 굳어 쉽게 바뀌지 않는 상태를 뜻해요.", "day": 11}, {"w": "intrepid", "k": "겁 없는", "s": "fearless", "e": "The intrepid explorer continued despite the storm.", "n": "위험한 상황에서도 겁내지 않고 용감한 것을 뜻해요.", "day": 11}, {"w": "knead", "k": "반죽하다", "s": "blend", "e": "She kneaded the dough until it became smooth.", "n": "반죽을 손으로 눌러 섞고 부드럽게 만드는 뜻이에요.", "day": 11}, {"w": "listless", "k": "생기 없는", "s": "languid", "e": "He felt listless after staying up all night.", "n": "기운이 없고 아무것도 하고 싶지 않은 상태를 뜻해요.", "day": 11}, {"w": "momentous", "k": "매우 중요한", "s": "important", "e": "The court made a momentous decision that changed the law.", "n": "앞으로 큰 영향을 미칠 만큼 매우 중요한 일을 뜻해요.", "day": 11}, {"w": "nonplussed", "k": "어찌 할 바를 모르는", "s": "confused", "e": "She was nonplussed by the sudden change of plans.", "n": "뜻밖의 상황 때문에 당황해 어떻게 반응해야 할지 모르는 상태예요.", "day": 11}, {"w": "outlandish", "k": "이국적인", "s": "exotic", "e": "The designer became known for her outlandish costumes.", "n": "매우 낯설거나 기이해서 눈에 띄는 것을 뜻해요.", "day": 11}, {"w": "permanent", "k": "영원한", "s": "constant", "e": "The museum is looking for a permanent location.", "n": "일시적이지 않고 계속 유지되는 상태를 뜻해요.", "day": 11}, {"w": "prescription", "k": "처방전", "s": "instruction", "e": "The doctor wrote a prescription for the medicine.", "n": "의사가 약이나 치료 방법을 지시한 문서를 뜻해요.", "day": 11}, {"w": "quest", "k": "탐험", "s": "mission", "e": "The explorers began a quest to find the lost city.", "n": "어떤 중요한 것을 찾거나 이루기 위한 긴 탐색이나 여정을 뜻해요.", "day": 11}, {"w": "resent", "k": "분개하다", "s": "begrudge", "e": "She resented being blamed for a mistake she did not make.", "n": "부당한 대우나 상황에 대해 화나고 억울하게 느끼는 뜻이에요.", "day": 11}, {"w": "sanitary", "k": "위생의", "s": "hygienic", "e": "The kitchen must be kept clean and sanitary.", "n": "건강을 지키기 위해 깨끗하고 위생적인 상태를 뜻해요.", "day": 11}, {"w": "soundness", "k": "건전성", "s": "healthiness", "e": "The engineers examined the structural soundness of the bridge.", "n": "상태·판단·구조 등이 건전하고 믿을 만한 정도를 뜻해요.", "day": 11}, {"w": "sporadic", "k": "때때로 일어나는", "s": "intermittent", "e": "Sporadic showers are expected throughout the afternoon.", "n": "일정하지 않은 간격으로 가끔씩 일어나는 것을 뜻해요.", "day": 11}, {"w": "submerge", "k": "물에 잠그다", "s": "dive", "e": "The diver submerged himself beneath the surface.", "n": "물이나 액체 아래로 완전히 잠기게 하거나 잠기는 뜻이에요.", "day": 11}, {"w": "tenacious", "k": "고집하는", "s": "pertinacious", "e": "She remained tenacious in pursuing her goal.", "n": "어려움이 있어도 포기하지 않고 끈질기게 계속하는 태도를 뜻해요.", "day": 11}, {"w": "turbulence", "k": "거칠게 몰아침", "s": "tumult", "e": "The plane encountered severe turbulence during the flight.", "n": "공기나 물의 거친 움직임, 또는 혼란한 상황을 뜻해요.", "day": 11}, {"w": "verse", "k": "운문", "s": "poetry", "e": "The poet read a short verse from her new collection.", "n": "운율이 있는 시의 한 부분이나 시 형식을 뜻해요.", "day": 11}, {"w": "zenith", "k": "정점", "s": "peak", "e": "Her career reached its zenith in the late 1990s.", "n": "발전이나 성공이 가장 높은 지점에 이른 상태를 뜻해요.", "day": 11}, {"w": "abstruse", "k": "난해한", "s": "unfathomable", "e": "The professor's explanation was too abstruse for beginners.", "n": "이해하기 매우 어렵고 복잡한 내용을 나타내요.", "day": 12}, {"w": "alleviate", "k": "고통을 줄여주다", "s": "abate", "e": "The medicine helped alleviate the pain.", "n": "고통·문제·부담의 정도를 줄여 주는 뜻이에요.", "day": 12}, {"w": "artifice", "k": "책략", "s": "wile", "e": "The trick was achieved through clever artifice.", "n": "목적을 이루기 위해 사용하는 교묘한 속임수나 책략을 뜻해요.", "day": 12}, {"w": "bland", "k": "맛이 밍밍한", "s": "flavorless", "e": "The soup was bland and needed more seasoning.", "n": "맛이나 개성이 약해 특별한 인상이 없는 것을 뜻해요.", "day": 12}, {"w": "cascade", "k": "작은 폭포", "s": "waterfall", "e": "A clear cascade flowed down the rocky slope.", "n": "단계적으로 떨어지는 작은 폭포나 연속적인 흐름을 뜻해요.", "day": 12}, {"w": "complacent", "k": "현실에 안주하는", "s": "contented", "e": "The team became complacent after several easy victories.", "n": "현재 상태에 지나치게 만족해 경계심이나 노력을 잃은 상태예요.", "day": 12}, {"w": "cordial", "k": "마음에서 우러난", "s": "heartfelt", "e": "They exchanged a cordial greeting at the meeting.", "n": "진심으로 따뜻하고 친근한 태도를 뜻해요.", "day": 12}, {"w": "deliverance", "k": "구출", "s": "salvation", "e": "The rescue boat brought deliverance to the stranded sailors.", "n": "위험이나 고통에서 벗어나 구출되는 것을 뜻해요.", "day": 12}, {"w": "dilatory", "k": "지체하는", "s": "belated", "e": "The committee was criticized for its dilatory response.", "n": "일을 미루거나 지연시키는 성향을 뜻해요.", "day": 12}, {"w": "dogged", "k": "완고한", "s": "persistent", "e": "Her dogged determination eventually paid off.", "n": "쉽게 포기하지 않고 끈질기게 계속하는 태도를 뜻해요.", "day": 12}, {"w": "encounter", "k": "우연히 만나다", "s": "come across", "e": "We encountered an old friend at the station.", "n": "우연히 사람이나 상황을 마주치는 뜻이에요.", "day": 12}, {"w": "exacerbate", "k": "더욱 심하게 하다", "s": "aggravate", "e": "The heat could exacerbate the existing problem.", "n": "이미 나쁜 상황이나 증상을 더 악화시키는 뜻이에요.", "day": 12}, {"w": "fanciful", "k": "변덕스러운", "s": "fickle", "e": "The novel contains several fanciful ideas.", "n": "현실적이지 않고 상상력이 많이 들어간 것을 뜻해요.", "day": 12}, {"w": "forgo", "k": "없이 지내다", "s": "abstain", "e": "He decided to forgo dessert for a month.", "n": "원하는 것을 스스로 포기하거나 하지 않는 뜻이에요.", "day": 12}, {"w": "genuflect", "k": "절하다", "s": "bow", "e": "The worshippers genuflected before the altar.", "n": "존경이나 종교적 의미로 무릎을 굽혀 절하는 뜻이에요.", "day": 12}, {"w": "hazardous", "k": "위험한", "s": "risky", "e": "Driving in icy conditions can be hazardous.", "n": "사고나 손해가 생길 위험이 큰 것을 뜻해요.", "day": 12}, {"w": "ignominy", "k": "치욕", "s": "disgrace", "e": "The scandal brought ignominy to the once-respected official.", "n": "명예를 크게 잃고 수치스러운 상태를 뜻해요.", "day": 12}, {"w": "inhabit", "k": "살다", "s": "occupy", "e": "Many species inhabit the tropical forest.", "n": "사람이나 동물이 어떤 장소에 살거나 거주하는 뜻이에요.", "day": 12}, {"w": "intricate", "k": "복잡한", "s": "complicated", "e": "The necklace has an intricate pattern.", "n": "세부가 많고 정교하게 얽혀 복잡한 것을 뜻해요.", "day": 12}, {"w": "knoll", "k": "둔덕", "s": "mound", "e": "They climbed a grassy knoll to see the valley.", "n": "주변보다 약간 높게 솟은 작은 언덕을 뜻해요.", "day": 12}, {"w": "literacy", "k": "읽고 쓸 줄 아는 능력", "s": "knowledge", "e": "The program aims to improve adult literacy.", "n": "읽기와 쓰기의 기본 능력을 뜻해요.", "day": 12}, {"w": "maritime", "k": "바다의", "s": "nautical", "e": "The city has a long maritime history.", "n": "바다·선박·해상 활동과 관련된 것을 뜻해요.", "day": 12}, {"w": "momentum", "k": "움직이게 하는 힘", "s": "impetus", "e": "The campaign gained momentum after the debate.", "n": "일이나 움직임이 계속 앞으로 나아가게 하는 힘을 뜻해요.", "day": 12}, {"w": "nostalgia", "k": "향수", "s": "reminiscence", "e": "The old song filled her with nostalgia.", "n": "과거를 그리워하며 느끼는 따뜻하고 아련한 감정을 뜻해요.", "day": 12}, {"w": "outlook", "k": "조망", "s": "viewpoint", "e": "Her outlook on life became more positive.", "n": "앞으로의 전망이나 어떤 문제를 바라보는 관점을 뜻해요.", "day": 12}, {"w": "perfidy", "k": "배신", "s": "treachery", "e": "The betrayal was remembered as an act of perfidy.", "n": "신뢰를 저버리는 심각한 배신이나 불성실을 뜻해요.", "day": 12}, {"w": "quota", "k": "몫", "s": "allocation", "e": "Each team was given a monthly sales quota.", "n": "정해진 몫이나 할당량을 뜻해요.", "day": 12}, {"w": "reserved", "k": "속 마음을 드러내지 않는", "s": "aloof", "e": "He is polite but rather reserved with strangers.", "n": "감정이나 생각을 쉽게 드러내지 않는 태도를 뜻해요.", "day": 12}, {"w": "sanctimonious", "k": "독실한 체하는", "s": "insincere", "e": "His sanctimonious speech annoyed the audience.", "n": "실제로는 그렇지 않으면서 도덕적이거나 경건한 척하는 태도예요.", "day": 12}, {"w": "shove", "k": "떠밀다", "s": "push", "e": "He shoved the heavy box across the floor.", "n": "강한 힘으로 밀어 움직이게 하는 뜻이에요.", "day": 12}, {"w": "sprint", "k": "전속력으로 달리다", "s": "run", "e": "She sprinted to catch the bus.", "n": "짧은 거리를 아주 빠르게 전속력으로 달리는 뜻이에요.", "day": 12}, {"w": "submissive", "k": "복종하는", "s": "obedient", "e": "The dog became calm and submissive.", "n": "상대의 권위나 요구에 쉽게 복종하는 태도를 뜻해요.", "day": 12}, {"w": "tenant", "k": "세입자", "s": "occupant", "e": "The tenant signed a one-year lease.", "n": "집이나 건물을 빌려 사용하는 사람을 뜻해요.", "day": 12}, {"w": "turmoil", "k": "소란", "s": "confusion", "e": "The sudden resignation threw the company into turmoil.", "n": "질서가 무너지고 혼란이 심한 상태를 뜻해요.", "day": 12}, {"w": "vertex", "k": "최고점", "s": "apex", "e": "The two lines meet at the vertex of the angle.", "n": "도형의 꼭짓점 또는 어떤 것의 가장 높은 지점을 뜻해요.", "day": 12}, {"w": "zephyr", "k": "서풍", "s": "breeze", "e": "A gentle zephyr moved through the trees.", "n": "부드럽게 부는 산들바람을 뜻하는 문학적인 표현이에요.", "day": 12}, {"w": "absurd", "k": "터무니없는", "s": "ridiculous", "e": "The idea seemed absurd at first.", "n": "논리나 상식에 맞지 않을 만큼 터무니없는 것을 뜻해요.", "day": 13}, {"w": "alliance", "k": "동맹", "s": "union", "e": "The two countries formed a military alliance.", "n": "공통 목적을 위해 맺는 동맹이나 협력 관계를 뜻해요.", "day": 13}, {"w": "assertive", "k": "자기 주장이 강한", "s": "self-assured", "e": "She was assertive without being rude.", "n": "자신의 의견이나 권리를 분명하고 자신 있게 표현하는 태도예요.", "day": 13}, {"w": "blasé", "k": "심드렁한", "s": "bored", "e": "He seemed blasé about the exciting news.", "n": "너무 익숙해져 흥미나 감동을 느끼지 못하는 태도를 뜻해요.", "day": 13}, {"w": "celerity", "k": "민첩함", "s": "swiftness", "e": "The team responded with remarkable celerity.", "n": "매우 빠르고 민첩하게 움직이는 것을 뜻해요.", "day": 13}, {"w": "compatible", "k": "잘 어울릴 수 있는", "s": "harmonious", "e": "The two software systems are fully compatible.", "n": "서로 충돌하지 않고 함께 잘 작동하거나 어울리는 뜻이에요.", "day": 13}, {"w": "devout", "k": "독실한", "s": "pious", "e": "She was a devout member of the community.", "n": "종교적 신앙이 매우 깊고 성실한 태도를 뜻해요.", "day": 13}, {"w": "dilute", "k": "묽게 하다", "s": "thin", "e": "Add water to dilute the solution.", "n": "액체에 다른 물질을 섞어 농도를 낮추는 뜻이에요.", "day": 13}, {"w": "dogmatic", "k": "독단적인", "s": "dictatorial", "e": "He was criticized for his dogmatic views.", "n": "자신의 생각만 옳다고 믿고 다른 의견을 받아들이지 않는 태도예요.", "day": 13}, {"w": "encumber", "k": "방해하다", "s": "hamper", "e": "Heavy luggage encumbered their journey.", "n": "짐이나 문제 등이 움직임이나 진행을 방해하는 뜻이에요.", "day": 13}, {"w": "exalt", "k": "위로 떠받들다", "s": "glorify", "e": "The poem exalts courage and loyalty.", "n": "사람이나 가치를 매우 높이 평가하고 칭송하는 뜻이에요.", "day": 13}, {"w": "fetch", "k": "가지고 오다", "s": "return with", "e": "Please fetch the documents from the office.", "n": "어딘가에 가서 물건이나 사람을 데려오거나 가져오는 뜻이에요.", "day": 13}, {"w": "formidable", "k": "무서운", "s": "horrible", "e": "They faced a formidable opponent in the final.", "n": "강력하거나 어려워 상대하기 두려운 대상을 뜻해요.", "day": 13}, {"w": "glance", "k": "힐끗 보다", "s": "glimpse", "e": "She glanced at the clock before leaving.", "n": "아주 짧게 또는 빠르게 바라보는 뜻이에요.", "day": 13}, {"w": "hapless", "k": "불운한", "s": "unlucky", "e": "The hapless traveler lost his passport and wallet.", "n": "불운해서 계속 좋지 않은 일을 겪는 사람을 나타내요.", "day": 13}, {"w": "ignorance", "k": "무지", "s": "unawareness", "e": "The mistake was caused by ignorance of the rules.", "n": "필요한 지식이나 정보를 알지 못하는 상태를 뜻해요.", "day": 13}, {"w": "incendiary", "k": "방화의", "s": "inflammatory", "e": "The speech contained incendiary language.", "n": "불을 일으키는 것 또는 갈등을 격화시키는 자극적인 것을 뜻해요.", "day": 13}, {"w": "inhumane", "k": "비인간적인", "s": "brutal", "e": "The prisoners were kept in inhumane conditions.", "n": "사람답지 않을 정도로 잔인하고 비정한 것을 뜻해요.", "day": 13}, {"w": "intuition", "k": "직감", "s": "instinct", "e": "Her intuition told her that something was wrong.", "n": "논리적 추론 없이 즉각적으로 느끼거나 판단하는 능력을 뜻해요.", "day": 13}, {"w": "knotty", "k": "복잡한", "s": "complex", "e": "The committee struggled with a knotty problem.", "n": "해결하기 어렵고 복잡하게 얽힌 문제를 나타내요.", "day": 13}, {"w": "literal", "k": "글자대로의", "s": "exact", "e": "The literal meaning of the phrase is quite different.", "n": "비유가 아니라 단어의 실제·직접적인 의미를 뜻해요.", "day": 13}, {"w": "milieu", "k": "(사회적) 환경", "s": "surroundings", "e": "The artist grew up in a creative milieu.", "n": "사람에게 영향을 주는 사회적·문화적 환경을 뜻해요.", "day": 13}, {"w": "notable", "k": "유명한", "s": "renowned", "e": "She made a notable contribution to the field.", "n": "눈에 띄고 중요하거나 유명한 것을 뜻해요.", "day": 13}, {"w": "outpost", "k": "전초지", "s": "frontier", "e": "The soldiers established an outpost near the border.", "n": "중심지에서 떨어진 작은 기지나 전초 지역을 뜻해요.", "day": 13}, {"w": "perpetrate", "k": "나쁜 짓을 범하다", "s": "commit", "e": "The group was accused of perpetrating fraud.", "n": "범죄나 잘못된 행동을 저지르는 뜻이에요.", "day": 13}, {"w": "prestigious", "k": "고급의", "s": "honored", "e": "She won a prestigious international award.", "n": "높은 명성과 존경을 받는 것을 뜻해요.", "day": 13}, {"w": "quirk", "k": "기벽", "s": "idiosyncrasy", "e": "One of his quirks is arranging books by color.", "n": "개인에게만 나타나는 독특하고 조금 이상한 습관이나 특징이에요.", "day": 13}, {"w": "resigned", "k": "단념한", "s": "reconciled", "e": "She gave a resigned sigh and accepted the decision.", "n": "바꿀 수 없는 상황을 체념하고 받아들이는 태도를 뜻해요.", "day": 13}, {"w": "sanction", "k": "승인하다", "s": "authorize", "e": "The committee sanctioned the new plan.", "n": "공식적으로 허가하거나 승인하는 뜻이에요.", "day": 13}, {"w": "showy", "k": "화려한", "s": "ostentatious", "e": "He disliked showy decorations.", "n": "눈에 띄게 화려해서 과시하는 듯한 것을 뜻해요.", "day": 13}, {"w": "spur", "k": "박차를 가하다", "s": "goad", "e": "The success spurred the team to work even harder.", "n": "사람이나 일을 더 빠르게 움직이도록 자극하는 뜻이에요.", "day": 13}, {"w": "subordinate", "k": "부하", "s": "assistant", "e": "The manager delegated the task to a subordinate.", "n": "조직에서 더 낮은 직위에 있는 사람을 뜻해요.", "day": 13}, {"w": "tenet", "k": "집단이 신봉하는 주의", "s": "doctrine", "e": "Freedom of expression is a central tenet of the organization.", "n": "집단이나 철학이 기본적으로 믿는 원칙을 뜻해요.", "day": 13}, {"w": "turncoat", "k": "변절자", "s": "betrayer", "e": "He was condemned as a turncoat after changing sides.", "n": "자신이 속했던 편을 버리고 반대편으로 간 사람을 뜻해요.", "day": 13}, {"w": "veer", "k": "방향을 홱 틀다", "s": "swerve", "e": "The car suddenly veered to the left.", "n": "진행 방향을 갑자기 바꾸는 뜻이에요.", "day": 13}, {"w": "zest", "k": "열성", "s": "ardor", "e": "She approached the project with zest.", "n": "일이나 삶에 대한 활기찬 열정과 즐거움을 뜻해요.", "day": 13}, {"w": "abundant", "k": "풍부한", "s": "plentiful", "e": "Fresh water is abundant in this region.", "n": "필요 이상으로 매우 많고 풍부한 것을 뜻해요.", "day": 14}, {"w": "allusion", "k": "암시", "s": "implication", "e": "The poem contains an allusion to Greek mythology.", "n": "직접 말하지 않고 다른 대상이나 이야기를 간접적으로 언급하는 뜻이에요.", "day": 14}, {"w": "assess", "k": "가치를 평가하다", "s": "appraise", "e": "The teacher assessed the students' progress.", "n": "가치·수준·상태 등을 판단하고 평가하는 뜻이에요.", "day": 14}, {"w": "blast", "k": "거센 폭발", "s": "gale", "e": "A sudden blast shook the windows.", "n": "강한 폭발이나 갑작스럽고 강한 바람을 뜻할 수 있어요.", "day": 14}, {"w": "catastrophe", "k": "대재앙", "s": "calamity", "e": "The earthquake was a national catastrophe.", "n": "큰 피해와 불행을 가져오는 심각한 재난을 뜻해요.", "day": 14}, {"w": "compliant", "k": "유순한", "s": "docile", "e": "The patient was calm and compliant during the procedure.", "n": "요구나 규칙에 잘 따르고 순응하는 태도를 뜻해요.", "day": 14}, {"w": "corpse", "k": "시체", "s": "dead body", "e": "The investigators discovered a corpse near the river.", "n": "죽은 사람이나 동물의 몸을 뜻해요.", "day": 14}, {"w": "deluge", "k": "대홍수", "s": "downpour", "e": "The sudden deluge flooded several streets.", "n": "엄청난 양의 비나 물이 한꺼번에 쏟아지는 것을 뜻해요.", "day": 14}, {"w": "diminutive", "k": "아주 작은", "s": "tiny", "e": "The diminutive cottage stood at the edge of the forest.", "n": "보통보다 매우 작은 크기를 뜻해요.", "day": 14}, {"w": "doldrums", "k": "답답함", "s": "depression", "e": "The company fell into the economic doldrums.", "n": "활기나 발전이 없는 침체된 상태를 뜻해요.", "day": 14}, {"w": "encyclopedia", "k": "백과사전", "s": "reference book", "e": "She looked up the topic in an encyclopedia.", "n": "여러 분야의 지식을 체계적으로 설명한 참고서를 뜻해요.", "day": 14}, {"w": "exasperated", "k": "분노한", "s": "irritated", "e": "The repeated delays left everyone exasperated.", "n": "계속되는 문제 때문에 몹시 짜증 나고 화난 상태예요.", "day": 14}, {"w": "fastidious", "k": "까다로운", "s": "finicky", "e": "He is fastidious about keeping his desk neat.", "n": "작은 세부까지 매우 까다롭게 신경 쓰는 태도를 뜻해요.", "day": 14}, {"w": "fortify", "k": "강화시키다", "s": "strengthen", "e": "The walls were fortified before the attack.", "n": "더 강하고 안전하게 만들거나 방어력을 높이는 뜻이에요.", "day": 14}, {"w": "glare", "k": "노려보다", "s": "stare", "e": "She glared at him after the rude comment.", "n": "화가 난 표정으로 강하게 노려보는 뜻이에요.", "day": 14}, {"w": "hatchet", "k": "손도끼", "s": "ax", "e": "He used a hatchet to split the wood.", "n": "한 손으로 사용하는 작은 도끼를 뜻해요.", "day": 14}, {"w": "illegitimate", "k": "위법의", "s": "unlawful", "e": "The court ruled the action illegitimate.", "n": "법이나 규칙에 맞지 않아 정당하지 않은 것을 뜻해요.", "day": 14}, {"w": "inception", "k": "발단", "s": "beginning", "e": "The project has grown rapidly since its inception.", "n": "어떤 일이나 조직이 처음 시작된 시점을 뜻해요.", "day": 14}, {"w": "iniquity", "k": "부정", "s": "wickedness", "e": "The novel exposes the iniquity of the corrupt system.", "n": "심각한 부도덕함이나 사악한 행동을 뜻해요.", "day": 14}, {"w": "inundate", "k": "범람시키다", "s": "flood", "e": "Heavy rain inundated the low-lying fields.", "n": "물이 넘쳐 지역을 잠기게 하거나, 일이 한꺼번에 몰려드는 뜻이에요.", "day": 14}, {"w": "label", "k": "라벨을 붙이다", "s": "tag", "e": "Please label each box clearly.", "n": "이름이나 설명을 표시하는 표지를 붙이는 뜻이에요.", "day": 14}, {"w": "literary", "k": "문학의", "s": "fictional", "e": "She is interested in literary criticism.", "n": "문학이나 글쓰기와 관련된 것을 뜻해요.", "day": 14}, {"w": "maternal", "k": "어머니의", "s": "motherly", "e": "She showed strong maternal instincts.", "n": "어머니와 관련되거나 어머니 같은 성격을 뜻해요.", "day": 14}, {"w": "mongrel", "k": "잡종", "s": "hybrid", "e": "The shelter took in a friendly mongrel dog.", "n": "서로 다른 품종이 섞인 동물을 뜻해요.", "day": 14}, {"w": "notion", "k": "개념", "s": "belief", "e": "He rejected the notion that success comes easily.", "n": "생각·개념·믿음 정도를 뜻해요.", "day": 14}, {"w": "outrage", "k": "분노", "s": "rage", "e": "The decision caused public outrage.", "n": "부당한 일에 대해 느끼는 매우 강한 분노를 뜻해요.", "day": 14}, {"w": "perpetual", "k": "영원한", "s": "everlasting", "e": "The machine made a perpetual humming sound.", "n": "끝없이 계속되거나 매우 오래 지속되는 것을 뜻해요.", "day": 14}, {"w": "preposterous", "k": "말도 안 되는", "s": "absurd", "e": "The accusation was completely preposterous.", "n": "너무 터무니없어서 믿기 어려운 것을 뜻해요.", "day": 14}, {"w": "resilient", "k": "원상태로 돌아가는", "s": "elastic", "e": "Children can be remarkably resilient after difficult experiences.", "n": "충격이나 어려움 후에 빠르게 회복하는 능력을 뜻해요.", "day": 14}, {"w": "sanctuary", "k": "보호구역", "s": "reserve", "e": "The island is a sanctuary for rare birds.", "n": "위험에서 보호받을 수 있는 안전한 장소를 뜻해요.", "day": 14}, {"w": "shred", "k": "갈기갈기 찢다", "s": "tear", "e": "She shredded the old documents.", "n": "종이나 천 등을 아주 작은 조각으로 찢는 뜻이에요.", "day": 14}, {"w": "spurious", "k": "가짜의", "s": "fake", "e": "The website made several spurious claims.", "n": "진짜처럼 보이지만 사실이 아니거나 근거 없는 것을 뜻해요.", "day": 14}, {"w": "subsequent", "k": "다음의", "s": "following", "e": "Subsequent events proved the warning was correct.", "n": "어떤 일 뒤에 이어서 일어나는 것을 뜻해요.", "day": 14}, {"w": "table", "k": "미루다", "s": "postpone", "e": "The committee decided to table the proposal until next month.", "n": "미국 영어에서는 안건 논의를 나중으로 미루는 뜻으로도 써요.", "day": 14}, {"w": "tentative", "k": "시험적인", "s": "provisional", "e": "We made a tentative plan for the weekend.", "n": "확정되지 않아 임시적이고 조심스러운 상태를 뜻해요.", "day": 14}, {"w": "vestige", "k": "자취", "s": "trace", "e": "Only a vestige of the old wall remains.", "n": "과거에 존재했던 것의 아주 작은 흔적을 뜻해요.", "day": 14}, {"w": "afflict", "k": "괴롭히다", "s": "bother", "e": "The illness afflicted the region for many years.", "n": "질병·고통·문제가 사람을 오래 괴롭히는 뜻이에요.", "day": 15}, {"w": "aloof", "k": "냉담한", "s": "indifferent", "e": "He remained aloof during the discussion.", "n": "사람들과 거리를 두고 냉담하게 행동하는 태도를 뜻해요.", "day": 15}, {"w": "assiduous", "k": "지치지 않는", "s": "industrious", "e": "She was assiduous in preparing for the exam.", "n": "꾸준하고 성실하게 열심히 노력하는 태도를 뜻해요.", "day": 15}, {"w": "blatant", "k": "명백한", "s": "obvious", "e": "The advertisement contained a blatant lie.", "n": "너무 분명해서 숨길 수 없는 잘못이나 특징을 나타내요.", "day": 15}, {"w": "cater", "k": "제공하다", "s": "provide", "e": "The hotel caters to business travelers.", "n": "특정 사람의 필요나 요구에 맞춰 음식·서비스 등을 제공하는 뜻이에요.", "day": 15}, {"w": "compliment", "k": "찬사", "s": "accolade", "e": "She received many compliments on her presentation.", "n": "상대의 장점이나 성취를 칭찬하는 말을 뜻해요.", "day": 15}, {"w": "corpulent", "k": "뚱뚱한", "s": "obese", "e": "The novel describes a corpulent gentleman in a dark suit.", "n": "몸집이 매우 크고 뚱뚱한 상태를 뜻하는 다소 격식 있는 말이에요.", "day": 15}, {"w": "delusion", "k": "속임", "s": "deception", "e": "He was under the delusion that everyone agreed with him.", "n": "사실이 아닌 것을 사실이라고 믿는 잘못된 생각을 뜻해요.", "day": 15}, {"w": "dingy", "k": "우중충한", "s": "grimy", "e": "They rented a small, dingy apartment.", "n": "어둡고 더럽거나 낡아 우중충한 상태를 뜻해요.", "day": 15}, {"w": "doleful", "k": "슬픈", "s": "rueful", "e": "She gave him a doleful look.", "n": "슬프고 우울한 감정을 드러내는 모습을 뜻해요.", "day": 15}, {"w": "endeavor", "k": "노력하다", "s": "attempt", "e": "The team endeavored to finish the project on time.", "n": "목표를 이루기 위해 진지하게 노력하는 뜻이에요.", "day": 15}, {"w": "excess", "k": "초과", "s": "overabundance", "e": "Excess sugar can be harmful to health.", "n": "필요하거나 정상적인 양보다 지나치게 많은 상태를 뜻해요.", "day": 15}, {"w": "fathom", "k": "이해하다", "s": "understand", "e": "I could not fathom why he made that decision.", "n": "복잡하거나 이해하기 어려운 것을 깊이 이해한다는 뜻이에요.", "day": 15}, {"w": "fortitude", "k": "용기", "s": "determination", "e": "She faced the crisis with remarkable fortitude.", "n": "어려움과 고통을 견디는 정신적 용기와 인내를 뜻해요.", "day": 15}, {"w": "glean", "k": "(정보 등을) 조금씩 모으다", "s": "collect", "e": "She gleaned useful information from several reports.", "n": "여러 곳에서 정보를 조금씩 모아 얻는 뜻이에요.", "day": 15}, {"w": "haughty", "k": "오만한", "s": "arrogant", "e": "His haughty manner offended the guests.", "n": "자신이 남보다 우월하다고 생각하는 오만한 태도를 뜻해요.", "day": 15}, {"w": "iconoclast", "k": "우상 파괴자", "s": "nonconformist", "e": "The writer was regarded as an iconoclast who challenged tradition.", "n": "기존의 권위나 전통적 믿음에 과감히 도전하는 사람을 뜻해요.", "day": 15}, {"w": "incessant", "k": "끊임없는", "s": "ceaseless", "e": "The incessant noise made it hard to concentrate.", "n": "멈추지 않고 계속 이어지는 것을 뜻해요.", "day": 15}, {"w": "initiate", "k": "시작하다", "s": "commence", "e": "The company initiated a new training program.", "n": "일이나 과정 등을 공식적으로 시작하는 뜻이에요.", "day": 15}, {"w": "insofar", "k": "~하는 한에 있어서는", "s": "to such an extent", "e": "The plan is useful insofar as it reduces unnecessary costs.", "n": "어떤 사실이나 조건이 적용되는 범위를 나타낼 때 써요.", "day": 15}, {"w": "laborious", "k": "힘든", "s": "onerous", "e": "Writing the report was a laborious process.", "n": "많은 시간과 노력을 요구해 힘든 일을 뜻해요.", "day": 15}, {"w": "majesty", "k": "장엄함", "s": "grandeur", "e": "They were impressed by the majesty of the mountains.", "n": "크고 아름다워 경외감을 주는 장엄함을 뜻해요.", "day": 15}, {"w": "maternity", "k": "모성", "s": "motherhood", "e": "The hospital opened a new maternity ward.", "n": "임신·출산·어머니 역할과 관련된 것을 뜻해요.", "day": 15}, {"w": "monitor", "k": "지켜보다", "s": "check", "e": "Doctors monitored the patient's condition overnight.", "n": "상태나 변화를 계속 관찰하고 확인하는 뜻이에요.", "day": 15}, {"w": "novel", "k": "새로운", "s": "new", "e": "The scientist proposed a novel solution.", "n": "기존과 달리 새롭고 독창적인 것을 뜻해요.", "day": 15}, {"w": "overbearing", "k": "거만한", "s": "domineering", "e": "His overbearing manner made teamwork difficult.", "n": "자신의 뜻을 강요하며 남을 지배하려는 태도를 뜻해요.", "day": 15}, {"w": "perplex", "k": "난처하게 하다", "s": "bewilder", "e": "The complicated instructions perplexed the students.", "n": "상대를 혼란스럽게 해 이해하거나 판단하기 어렵게 만드는 뜻이에요.", "day": 15}, {"w": "presumptuous", "k": "주제넘은", "s": "audacious", "e": "It was presumptuous of him to speak for everyone.", "n": "권한이나 자격 없이 지나치게 나서는 태도를 뜻해요.", "day": 15}, {"w": "quintessence", "k": "핵심", "s": "essence", "e": "The village is the quintessence of rural charm.", "n": "어떤 것의 가장 순수하고 대표적인 핵심을 뜻해요.", "day": 15}, {"w": "recluse", "k": "은둔자", "s": "hermit", "e": "The famous author lived as a recluse for many years.", "n": "사람들과 거의 어울리지 않고 혼자 지내는 사람을 뜻해요.", "day": 15}, {"w": "seasoned", "k": "경험 많은", "s": "experienced", "e": "She is a seasoned negotiator.", "n": "오랜 경험으로 능숙하고 노련한 것을 뜻해요.", "day": 15}, {"w": "shrewd", "k": "기민한", "s": "sharp", "e": "He made a shrewd business decision.", "n": "상황을 빠르게 파악하고 영리하게 판단하는 능력을 뜻해요.", "day": 15}, {"w": "spurn", "k": "쫓아내다", "s": "reject", "e": "She spurned the offer immediately.", "n": "제안이나 사람을 강하게 거절하거나 물리치는 뜻이에요.", "day": 15}, {"w": "subservient", "k": "비굴한", "s": "submissive", "e": "He refused to take a subservient role.", "n": "지나치게 복종하며 자신의 의견을 내세우지 못하는 태도를 뜻해요.", "day": 15}, {"w": "tenuous", "k": "희박한", "s": "feeble", "e": "The evidence supporting the claim was tenuous.", "n": "연결·근거·가능성이 약하고 불확실한 것을 뜻해요.", "day": 15}, {"w": "vessel", "k": "배", "s": "ship", "e": "The vessel sailed across the harbor at dawn.", "n": "배나 큰 선박을 뜻해요.", "day": 15}];
+const pool=[0, 4, 8, 13, 17, 22, 27, 34, 36, 40, 44, 49, 53, 58, 63, 70, 72, 76, 80, 85, 89, 94, 99, 106, 108, 112, 116, 121, 125, 130, 135, 142, 144, 148, 152, 157, 161, 166, 171, 178];
+const defs={"abstract": "a short summary of the main points", "carnage": "the killing of many people in a violent event", "dilemma": "a difficult choice between two or more options", "feud": "a long and bitter conflict between people or groups", "ingrained": "deeply established and difficult to change", "nonplussed": "so surprised or confused that one does not know how to react", "resent": "to feel anger or bitterness about unfair treatment", "verse": "writing arranged in lines with rhythm, as in poetry", "abstruse": "difficult to understand because it is complex", "cascade": "a small waterfall or something falling in stages", "dilatory": "slow to act because of delay or procrastination", "forgo": "to choose to do without something", "inhabit": "to live in or occupy a place", "quota": "a fixed amount or share that is assigned", "reserved": "quiet and not showing feelings easily", "vertex": "the highest point or the point where lines meet", "absurd": "completely unreasonable or ridiculous", "celerity": "great speed or swiftness", "dogmatic": "stubbornly certain that one's beliefs are correct", "glance": "to look quickly or briefly", "inhumane": "cruel and lacking compassion", "quirk": "an unusual habit or characteristic", "resigned": "accepting an unpleasant situation because it cannot be changed", "veer": "to change direction suddenly", "abundant": "existing in large quantities", "catastrophe": "a sudden event causing great damage or suffering", "diminutive": "very small", "fortify": "to strengthen or protect", "inception": "the beginning of something", "preposterous": "so unreasonable that it is hard to believe", "spurious": "false or not genuine", "tentative": "not final or certain; provisional", "afflict": "to cause pain or trouble over a period of time", "cater": "to provide what a particular group needs or wants", "dingy": "dark, dirty, and unattractive", "fortitude": "courage in the face of pain or difficulty", "incessant": "continuing without stopping", "perplex": "to make someone confused", "presumptuous": "too confident in acting without proper right or permission", "tenuous": "weak, slight, or not well supported"};
+let questions=[], qi=0, score=0, weak=[];
+const $=id=>document.getElementById(id);
+
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function addWeak(w){weak.push(w)}
+function progress(){
+  $('bar').style.width=((qi)/questions.length*100)+'%';
+  $('countStat').textContent=Math.min(qi+1,questions.length)+' / '+questions.length;
+}
+function makeQuestions(){
+  questions=pool.map((idx,pos)=>{
+    if(pos<10)return{kind:'meaning',idx};
+    if(pos<20)return{kind:'synonym',idx};
+    if(pos<30)return{kind:'context',idx};
+    return{kind:'recall',idx};
+  });
+  questions=shuffle(questions);
+}
+function distractors(target){
+  const c=words.filter(x=>x.w!==target.w), picked=[];
+  while(picked.length<3){
+    const x=c[Math.floor(Math.random()*c.length)];
+    if(!picked.some(y=>y.w===x.w))picked.push(x);
+  }
+  return picked;
+}
+function render(){
+  progress();
+  const q=questions[qi], x=words[q.idx];
+  $('feedback').textContent='';
+  $('nextBtn').classList.add('hidden');
+  $('quizCard').dataset.tries='0';
+  $('dayPill').textContent='DAY '+x.day;
+  $('options').innerHTML='';
+  $('answerInput').value='';
+  $('answerInput').disabled=false;
+
+  if(q.kind==='recall'){
+    $('typePill').textContent='SPELLING RECALL';
+    $('mcqArea').classList.add('hidden');
+    $('inputArea').classList.remove('hidden');
+    $('question').textContent=`Type the word that is closest in meaning to “${x.s}”.`;
+    setTimeout(()=>$('answerInput').focus(),50);
+    return;
+  }
+
+  $('mcqArea').classList.remove('hidden');
+  $('inputArea').classList.add('hidden');
+
+  if(q.kind==='meaning'){
+    $('typePill').textContent='MEANING';
+    $('question').textContent=`Which word means “${defs[x.w]||('closest in meaning to '+x.s)}”?`;
+  }
+  if(q.kind==='synonym'){
+    $('typePill').textContent='SYNONYM';
+    $('question').textContent=`Which word is closest in meaning to “${x.s}”?`;
+  }
+  if(q.kind==='context'){
+    $('typePill').textContent='CONTEXT';
+    $('question').textContent=x.e.replace(new RegExp(x.w,'ig'),'_____');
+  }
+
+  const opts=shuffle([x,...distractors(x)]);
+  opts.forEach(o=>{
+    const b=document.createElement('button');
+    b.type='button';
+    b.className='option';
+    b.textContent=o.w;
+    b.onclick=()=>answerMCQ(b,o.w===x.w,x,o);
+    $('options').appendChild(b);
+  });
+}
+
+function answerMCQ(btn,ok,x,selected){
+  if(btn.disabled)return;
+
+  if(ok){
+    score++;
+    [...$('options').children].forEach(b=>b.disabled=true);
+    btn.classList.add('correct');
+    $('feedback').textContent=`Correct! ${x.w} — ${x.k}`;
+    $('scoreStat').textContent='Score '+score;
+    $('nextBtn').classList.remove('hidden');
+    return;
+  }
+
+  btn.classList.add('wrong');
+  btn.disabled=true;
+  addWeak(x.w);
+
+  const tried=Number($('quizCard').dataset.tries||'0')+1;
+  $('quizCard').dataset.tries=String(tried);
+
+  if(tried<3){
+    $('feedback').textContent=`Not quite. “${selected.w}” means “${selected.k}”. Try again.`;
+  }else{
+    [...$('options').children].forEach(b=>b.disabled=true);
+    [...$('options').children].forEach(b=>{if(b.textContent===x.w)b.classList.add('correct')});
+    $('feedback').textContent=`Not quite. “${selected.w}” means “${selected.k}”. The correct answer is “${x.w}” — ${x.k}.`;
+    $('nextBtn').classList.remove('hidden');
+  }
+}
+
+$('recallForm').onsubmit=e=>{
+  e.preventDefault();
+  const q=questions[qi], x=words[q.idx], ans=$('answerInput').value.trim().toLowerCase();
+  if(!ans)return;
+
+  if(ans===x.w.toLowerCase()){
+    score++;
+    $('answerInput').disabled=true;
+    $('feedback').textContent=`Correct! ${x.w} — ${x.k}`;
+    $('scoreStat').textContent='Score '+score;
+    $('nextBtn').classList.remove('hidden');
+    return;
+  }
+
+  addWeak(x.w);
+  const typed=words.find(w=>w.w.toLowerCase()===ans);
+  const tried=Number($('quizCard').dataset.tries||'0')+1;
+  $('quizCard').dataset.tries=String(tried);
+
+  if(tried<3){
+    $('feedback').textContent=typed
+      ? `Not quite. “${typed.w}” means “${typed.k}”. Try again.`
+      : 'Not quite. Check the spelling and try again.';
+    $('answerInput').value='';
+    $('answerInput').focus();
+  }else{
+    $('answerInput').disabled=true;
+    $('feedback').textContent=typed
+      ? `Not quite. “${typed.w}” means “${typed.k}”. The correct answer is “${x.w}” — ${x.k}.`
+      : `Not quite. The correct answer is “${x.w}” — ${x.k}.`;
+    $('nextBtn').classList.remove('hidden');
+  }
+  $('scoreStat').textContent='Score '+score;
+};
+
+$('nextBtn').onclick=()=>{
+  qi++;
+  if(qi<questions.length)render();
+  else showResult();
+};
+
+function showResult(){
+  $('quizCard').classList.add('hidden');
+  $('resultCard').classList.remove('hidden');
+  $('bar').style.width='100%';
+  const pct=Math.round(score/questions.length*100);
+  $('finalScore').textContent=pct+'%';
+  $('resultText').textContent=
+    pct>=90 ? 'Excellent — strong retention across Days 11–15!' :
+    pct>=75 ? 'Good job — review the Weak Words once more.' :
+              'Keep going — focus on the Weak Words, then retry.';
+
+  const uniq=[...new Set(weak)];
+  $('weakList').innerHTML=uniq.length
+    ? uniq.map(w=>{
+        const x=words.find(v=>v.w===w);
+        return `<div class="weakitem"><div><strong>${x.w}</strong><div class="tag">Day ${x.day} · ${x.s}</div></div><span>${x.k}</span></div>`;
+      }).join('')
+    : '<div class="weakitem"><strong>Perfect!</strong><span>No weak words</span></div>';
+}
+
+$('restartBtn').onclick=()=>{
+  qi=0; score=0; weak=[];
+  $('scoreStat').textContent='Score 0';
+  $('resultCard').classList.add('hidden');
+  $('quizCard').classList.remove('hidden');
+  makeQuestions();
+  render();
+};
+
+makeQuestions();
+render();
+})();
+</script>
+</body>
+</html>
